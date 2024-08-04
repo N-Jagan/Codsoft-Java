@@ -1,0 +1,83 @@
+import java.util.Scanner;
+
+public class GradeCalculatorCLI {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input number of subjects
+        int numberOfSubjects;
+        while (true) {
+            try {
+                System.out.print("Enter the number of subjects: ");
+                numberOfSubjects = Integer.parseInt(scanner.nextLine());
+                if (numberOfSubjects <= 0) {
+                    System.out.println("The number of subjects must be positive. Please enter again.");
+                } else {
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a numeric value.");
+            }
+        }
+
+        String[] subjectNames = new String[numberOfSubjects];
+        int[] marks = new int[numberOfSubjects];
+        int totalMarks = 0;
+
+        // Input names and marks for each subject
+        System.out.println("Enter the names and marks for each subject (out of 100):");
+
+        for (int i = 0; i < numberOfSubjects; i++) {
+            System.out.print("Name of Subject " + (i + 1) + ": ");
+            subjectNames[i] = scanner.nextLine();
+
+            while (true) {
+                try {
+                    System.out.print("Marks in " + subjectNames[i] + ": ");
+                    marks[i] = Integer.parseInt(scanner.nextLine());
+
+                    // Check if the marks are within the valid range
+                    if (marks[i] < 0 || marks[i] > 100) {
+                        System.out.println("Marks must be between 0 and 100. Please enter again.");
+                    } else {
+                        totalMarks += marks[i];
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a numeric value.");
+                }
+            }
+        }
+
+        // Calculate average percentage
+        double averagePercentage = (totalMarks / (double)(numberOfSubjects * 100)) * 100;
+
+        // Determine grade
+        String grade;
+        if (averagePercentage >= 90) {
+            grade = "A+";
+        } else if (averagePercentage >= 80) {
+            grade = "A";
+        } else if (averagePercentage >= 70) {
+            grade = "B";
+        } else if (averagePercentage >= 60) {
+            grade = "C";
+        } else if (averagePercentage >= 50) {
+            grade = "D";
+        } else {
+            grade = "F";
+        }
+
+        // Display results
+        System.out.println("\nResults:");
+        System.out.println("Total Marks: " + totalMarks);
+        System.out.printf("Average Percentage: %.2f%%\n", averagePercentage);
+        System.out.println("Grade: " + grade);
+        
+        System.out.println("\nSubject-wise Marks:");
+        for (int i = 0; i < numberOfSubjects; i++) {
+            System.out.println(subjectNames[i] + ": " + marks[i]);
+        }
+    }
+}
