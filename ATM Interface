@@ -1,0 +1,142 @@
+import java.util.Scanner;
+
+public class ATM {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount(0.00); // Initial balance set to zero
+        ATMInterface atm = new ATMInterface(account);
+        atm.start();
+    }
+}
+
+class BankAccount {
+    private double balance;
+
+    public BankAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public boolean deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            return true;
+        }
+        return false;
+    }
+}
+
+class ATMInterface {
+    private BankAccount account;
+    private Scanner scanner;
+
+    public ATMInterface(BankAccount account) {
+        this.account = account;
+        this.scanner = new Scanner(System.in);
+    }
+
+    public void start() {
+        boolean running = true;
+        while (running) {
+            displayMenu();
+            int choice = getUserChoice();
+            switch (choice) {
+                case 1:
+                    handleWithdraw();
+                    break;
+                case 2:
+                    handleDeposit();
+                    break;
+                case 3:
+                    handleCheckBalance();
+                    break;
+                case 4:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+        System.out.println("Thank you for using the ATM. Goodbye!");
+    }
+
+    private void displayMenu() {
+        System.out.println("\nATM Menu:");
+        System.out.println("1. Withdraw");
+        System.out.println("2. Deposit");
+        System.out.println("3. Check Balance");
+        System.out.println("4. Exit");
+        System.out.print("Enter your choice: ");
+    }
+
+    private int getUserChoice() {
+        int choice = -1;
+        try {
+            choice = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+        }
+        return choice;
+    }
+
+    private void handleWithdraw() {
+        if (account.getBalance() <= 0) {
+            System.out.println("No available balance.");
+            return;
+        }
+
+        double amount;
+        while (true) {
+            System.out.print("Enter amount to withdraw: ");
+            amount = getUserAmount();
+            if (amount > 0 && amount <= account.getBalance()) {
+                if (account.withdraw(amount)) {
+                    System.out.printf("Withdrawal successful. New balance: $%.2f\n", account.getBalance());
+                    break;
+                }
+            } else {
+                System.out.println("Insufficient balance or invalid amount. Please try again.");
+            }
+        }
+    }
+
+    private void handleDeposit() {
+        double amount;
+        while (true) {
+            System.out.print("Enter amount to deposit: ");
+            amount = getUserAmount();
+            if (amount > 0) {
+                if (account.deposit(amount)) {
+                    System.out.printf("Deposit successful. New balance: $%.2f\n", account.getBalance());
+                    break;
+                }
+            } else {
+                System.out.println("Invalid amount. Please enter a positive value.");
+            }
+        }
+    }
+
+    private void handleCheckBalance() {
+        System.out.printf("Current balance: $%.2f\n", account.getBalance());
+    }
+
+    private double getUserAmount() {
+        double amount = -1;
+        try {
+            amount = Double.parseDouble(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid amount.");
+        }
+        return amount;
+    }
+}
